@@ -8,6 +8,7 @@ async function getNodesData(firstNodeId) {
 
   while (nodeIdQueue.length > 0) {
     const nodeId = nodeIdQueue.shift();
+    console.log(`visiting node: ${nodeId}`);
     if (nodeId in encounteredNodeIds) {
       // we've already seen this node, we don't need to make another get request
       encounteredNodeIds[nodeId] += 1;
@@ -18,8 +19,35 @@ async function getNodesData(firstNodeId) {
       nodeIdQueue = [...nodeIdQueue, ...nodes.getAllChildNodeIds()];
     }
   }
-  console.log('encounteredNodeIds: ', encounteredNodeIds);
   return encounteredNodeIds;
 }
 
-getNodesData('089ef556-dfff-4ff2-9733-654645be56fe');
+function summariseNodesData(nodesData) {
+  const summary = {
+    countOfUniqueNodes: 0,
+    mostReferencedNode: {
+      id: '',
+      references: 0,
+    },
+  };
+
+  Object.keys(nodesData).forEach((nodeId) => {
+    summary.countOfUniqueNodes += 1;
+    const referenceCount = nodesData[nodeId];
+    if (referenceCount > summary.mostReferencedNode.references) {
+      summary.mostReferencedNode.id = nodeId;
+      summary.mostReferencedNode.references = referenceCount;
+    }
+  });
+
+  console.log(`There are ${summary.countOfUniqueNodes} unique nodes.`);
+  console.log(`Node ${summary.mostReferencedNode.id} is shared the most amongs all other nodes.`);
+  return summary;
+}
+
+async function getNodesSummary() {
+  const nodesData = await getNodesData('089ef556-dfff-4ff2-9733-654645be56fe');
+  summariseNodesData(nodesData);
+}
+
+getNodesSummary();
