@@ -1,5 +1,5 @@
 # About 
-Solution to nodes on nodes challenge. See notes in `./NOTES.md`
+Solution to nodes on nodes challenge. See additional notes in `./NOTES.md`
 
 # Run
 * cd into the root folder 
